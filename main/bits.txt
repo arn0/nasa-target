@@ -81,3 +81,48 @@ Segment overview
   17   -         12   -          7   -          3   -
   19  | |  ?     22  | |  24    25  | |  27    29  | |  31
   ? .  -   20    ? .  -   23    ? .  -   26   28 .  -   30
+
+
+
+
+32-Segment CMOS LCD Driver pins -> ESP32-C3
+
+pin function
+2   LOAD      CS    GPIO7   spi chip select           (blue)         10
+34  DATA IN   MOSI  GPIO6   spi master out slave IN   (green)        7
+40  CLOCK     CLK   GPIO4   spi clock                 (yellow)       6
+
+
+ESP32-C3 SPI
+
+    Standard SPI Protocol         Extended SPI Protocol
+Full-Duplex      Half-Duplex           FSPI Bus
+SPI Signal       SPI Signal             Signal
+
+ MOSI             MOSI                  FSPID
+ MISO            (MISO)                 FSPIQ
+ CS               CS                    FSPICS0 ~ 5
+ CLK              CLK                   FSPICLK
+ —                —                     FSPIWP
+ —                —                     FSPIHD
+
+
+FSPI Bus Signal   Function
+FSPID             MOSI/SIO0 (serial data input and output, bit0)
+FSPIQ             MISO/SIO1 (serial data input and output, bit1)
+FSPIWP            SIO2 (serial data input and output, bit2)
+FSPIHD            SIO3 (serial data input and output, bit3)
+FSPICLK           Input and output clock in master/slave mode
+FSPICS0           Input and output CS signal in master/slave mode
+FSPICS1 ~ 5       Output CS signal in master mode
+
+
+The IO_MUX pins for SPI bus
+
+Pin Name    GPIO Number (SPI2)
+CS0         10
+SCLK        6
+MISO        2
+MOSI        7
+QUADWP      5
+QUADHD      4

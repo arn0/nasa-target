@@ -18,6 +18,9 @@
 #include "driver/spi_slave.h"
 #include "driver/gpio.h"
 
+#include "led_strip.h"
+
+static const char *TAG = "example";
 
 /*
 SPI receiver (slave) example.
@@ -445,7 +448,7 @@ void app_main(void)
         memset(recvbuf, 0, sizeof(recvbuf));
 //        memset(recvbuf, 0xA5, 129);
 
-        s_led_state = 0;
+        s_led_state = 1;
         blink_led();
 
         //Set up a transaction of 128 bytes to send/receive
@@ -458,7 +461,7 @@ void app_main(void)
         */
         ret=spi_slave_transmit(RCV_HOST, &t, portMAX_DELAY);
 
-        s_led_state = 1;
+        s_led_state = 0;
         blink_led();
 
         //spi_slave_transmit does not return until the master has done a transmission, so by here we have sent our data and
