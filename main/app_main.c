@@ -176,11 +176,15 @@ int segment0decode(char *buffer)
         break;
     
     case 0b00101000:
-        return('K');     // Keel offset
+        return('K');     // Set keel offset
+        break;
+    
+    case 0b00001000:
+        return('P');     // Display keel offset on power on
         break;
     
    default:
-        printf("segment0decode(): error decoding bits: %s %s ", bit_rep[segment >> 4], bit_rep[segment & 0x0F]);
+        printf("segment0decode(): error decoding bits: %s %s\n", bit_rep[segment >> 4], bit_rep[segment & 0x0F]);
         return(-1);
         break;
     }
@@ -237,7 +241,7 @@ int segment1number(char *buffer)
         break;
     
    default:
-        printf("segment1number(): error decoding bits: %s %s ", bit_rep[segment >> 4], bit_rep[segment & 0x0F]);
+        printf("segment1number(): error decoding bits: %s %s\n", bit_rep[segment >> 4], bit_rep[segment & 0x0F]);
         return(-1);
         break;
     }
@@ -294,7 +298,7 @@ int segment2number(char *buffer)
         break;
     
    default:
-        printf("segment2number(): error decoding bits: %s %s ", bit_rep[segment >> 4], bit_rep[segment & 0x0F]);
+        printf("segment2number(): error decoding bits: %s %s\n", bit_rep[segment >> 4], bit_rep[segment & 0x0F]);
         return(-1);
         break;
     }
@@ -350,7 +354,7 @@ int segment3number(char *buffer)
         break;
     
    default:
-        printf("segment3number(): error decoding bits: %s %s ", bit_rep[segment >> 4], bit_rep[segment & 0x0F]);
+        printf("segment3number(): error decoding bits: %s %s\n", bit_rep[segment >> 4], bit_rep[segment & 0x0F]);
         return(-1);
         break;
     }
@@ -361,10 +365,11 @@ void app_decode_segments(char *buffer)
     int i;
     float number;
 
-//    print_byte(buffer[0]);
-//    print_byte(buffer[1]);
-//    print_byte(buffer[2]);
-//    print_byte(buffer[3]);
+    print_byte(buffer[0]);
+    print_byte(buffer[1]);
+    print_byte(buffer[2]);
+    print_byte(buffer[3]);
+    printf("\n");
 
     i = segment1number(buffer);
     if(i != -1){
@@ -402,6 +407,10 @@ void app_decode_segments(char *buffer)
         printf("Set keel offset\n");
         break;
 
+    case 'P':
+        printf("Display keel offset\n");
+        break;
+
     default:
         break;
     }
@@ -424,7 +433,7 @@ void app_main(void)
 
     //Configuration for the SPI slave interface
     spi_slave_interface_config_t slvcfg={
-        .mode=3,
+        .mode=1,
         .spics_io_num=GPIO_CS,
         .queue_size=8,
         .flags=0,
@@ -448,9 +457,6 @@ void app_main(void)
         memset(recvbuf, 0, sizeof(recvbuf));
 //        memset(recvbuf, 0xA5, 129);
 
-        s_led_state = 1;
-        blink_led();
-
         //Set up a transaction of 128 bytes to send/receive
         t.length=4*8;
         t.tx_buffer=NULL;
@@ -461,15 +467,16 @@ void app_main(void)
         */
         ret=spi_slave_transmit(RCV_HOST, &t, portMAX_DELAY);
 
-        s_led_state = 0;
         blink_led();
+        /* Toggle the LED state */
+        s_led_state = !s_led_state;
 
         //spi_slave_transmit does not return until the master has done a transmission, so by here we have sent our data and
         //received data from the master. Print it.
 
         app_decode_segments(recvbuf);
 
-        //printf("\n                         ^\n");
+        printf("\n");
     }
 
 }
