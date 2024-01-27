@@ -74,7 +74,7 @@ seg15 _=0  -_=0  ¯-=1  E=1 A=1                  (segment 1) ✓
 seg16 _=0  -_=0  ¯-=0  E=1 A=1                  (segment 1) ✓
 
 
-Segment overview
+Segment overview (decoded)
   segment 1      segment 2       segment 3      segment 4
 
   15   -         10   -          5   -          1   -
@@ -84,6 +84,16 @@ Segment overview
   ? .  -   20    ? .  -   23    ? .  -   26   28 .  -   30
 
 not found: 8, 13, 14, 18, 21
+
+Segment overview (visual)
+  segment 1      segment 2       segment 3      segment 4
+
+  14   -          10   -            5   -           1   -
+  15  | |  13     11  | |  9   8 :  6  | |  4       2  | |  32
+  16   -          12   -            7   -           3   -
+  17  | |  19     21  | |  23      25  | |  27     29  | |  31
+       -   18   20 .   -   22   24 .    -   26   28 .   -   30
+
 
 
 
